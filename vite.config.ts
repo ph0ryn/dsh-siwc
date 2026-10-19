@@ -1,11 +1,15 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  staged: {
+    "*": "vp check --fix",
+    "package.json": "pnpx sort-package-json",
+  },
   fmt: {
     arrowParens: "always",
     bracketSpacing: true,
     endOfLine: "lf",
-    ignorePatterns: ["pnpm-lock.yaml"],
+    ignorePatterns: ["package.json", "pnpm-lock.yaml"],
     insertFinalNewline: true,
     printWidth: 100,
     semi: true,
