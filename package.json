@@ -2,6 +2,7 @@
   "name": "dsh-siwc",
   "version": "0.1.0",
   "description": "Sign in with ChatGPT for DeepSeek Harness",
+  "license": "MIT",
   "files": [
     "dist",
     "cordis.patch.yml"
