@@ -40,9 +40,10 @@ export default defineConfig({
     platform: "node",
     target: "node22.19",
     fixedExtension: false,
-    unbundle: true,
+    minify: true,
     deps: {
       neverBundle: true,
+      alwaysBundle: ["jose", "zod"],
     },
     dts: true,
   },
