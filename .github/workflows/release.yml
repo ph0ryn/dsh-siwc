@@ -54,16 +54,13 @@ jobs:
       - name: Build and pack
         run: pnpm pack --pack-destination artifacts
 
-      - name: Set up npm for trusted publishing
-        run: npm install --global npm@11
-
       - name: Publish to npm
         run: |
           npm_tag=latest
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then
             npm_tag=next
           fi
-          npm publish ./artifacts/*.tgz --access public --tag "$npm_tag"
+          pnpm publish ./artifacts/*.tgz --access public --tag "$npm_tag" --no-git-checks
 
       - name: Create GitHub Release
         env:
