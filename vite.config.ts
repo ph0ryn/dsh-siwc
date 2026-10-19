@@ -43,7 +43,7 @@ export default defineConfig({
     minify: true,
     deps: {
       neverBundle: true,
-      alwaysBundle: ["jose", "zod"],
+      alwaysBundle: ["jose", /^zod(?:\/|$)/],
     },
     dts: true,
   },

@@ -11,7 +11,8 @@ import {
 } from "@deepseek-ai/dsh-credentials";
 import { dshHomePath } from "@deepseek-ai/dsh-home-paths";
 import { LlmError } from "@deepseek-ai/dsh-llm";
-import { z } from "zod";
+import * as z from "zod/mini";
+import en from "zod/v4/locales/en.js";
 
 import {
   IdentityUnavailable,
@@ -23,32 +24,39 @@ import {
   type Rotation,
 } from "./oauth.ts";
 
+z.config(en());
+
 export const KEY = credentialKey("siwc", "chatgpt");
 const tokens = z.strictObject({
-  access: z.string().min(1),
-  refresh: z.string().min(1),
+  access: z.string().check(z.minLength(1)),
+  refresh: z.string().check(z.minLength(1)),
   expires: z.number(),
   scopes: z.array(z.string()),
-  refreshAfter: z.number().optional(),
+  refreshAfter: z.optional(z.number()),
 });
 const schema = z.strictObject({
   version: z.literal(1),
-  activeId: z.string().optional(),
-  welcomed: z.boolean().optional(),
+  activeId: z.optional(z.string()),
+  welcomed: z.optional(z.boolean()),
   accounts: z.array(
     z.strictObject({
-      id: z.string().min(1),
-      clientId: z.string().min(1),
-      subject: z.string().optional(),
-      email: z.string().optional(),
-      idToken: z.string().optional(),
-      tokens: tokens.optional(),
-      pending: z
-        .strictObject({ tokens, idToken: z.string().optional(), receivedAt: z.number() })
-        .optional(),
-      models: z
-        .array(z.strictObject({ id: z.string().min(1), name: z.string().min(1) }))
-        .optional(),
+      id: z.string().check(z.minLength(1)),
+      clientId: z.string().check(z.minLength(1)),
+      subject: z.optional(z.string()),
+      email: z.optional(z.string()),
+      idToken: z.optional(z.string()),
+      tokens: z.optional(tokens),
+      pending: z.optional(
+        z.strictObject({ tokens, idToken: z.optional(z.string()), receivedAt: z.number() }),
+      ),
+      models: z.optional(
+        z.array(
+          z.strictObject({
+            id: z.string().check(z.minLength(1)),
+            name: z.string().check(z.minLength(1)),
+          }),
+        ),
+      ),
     }),
   ),
 });
