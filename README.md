@@ -12,21 +12,31 @@ Use a browser on the same machine as DSH. Unlisted versions are unverified.
 
 ## Install
 
-Build a package from this checkout:
+Install from npm into your Web profile:
 
 ```sh
-pnpm install --frozen-lockfile
-pnpm pack
-```
-
-Add the resulting package to your Web profile:
-
-```sh
-dsh plugin --profile web add ./dsh-siwc-0.1.0.tgz --ignore-scripts
+dsh plugin --profile web add dsh-siwc --ignore-scripts
 ```
 
 Enable **dsh-siwc** in DSH's Plugins settings, then restart DSH.
 If another plugin uses the `openai` route, disable that route first to avoid a conflict.
+
+### From source
+
+Clone the repository and install dependencies:
+
+```sh
+git clone https://github.com/ph0ryn/dsh-siwc.git
+cd dsh-siwc
+pnpm install --frozen-lockfile
+```
+
+Build a package and install it into your Web profile:
+
+```sh
+pnpm pack
+dsh plugin --profile web add ./dsh-siwc-0.1.0.tgz --ignore-scripts
+```
 
 ## Use
 
@@ -47,6 +57,8 @@ Manage usage and app access in [ChatGPT settings](https://chatgpt.com/settings/u
 Live account sign-in and inference have not yet been verified; automated tests use local fixtures.
 
 ## Development
+
+Run the development checks:
 
 ```sh
 pnpm format
