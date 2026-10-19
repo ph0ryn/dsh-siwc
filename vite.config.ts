@@ -45,6 +45,5 @@ export default defineConfig({
       neverBundle: true,
       alwaysBundle: ["jose", /^zod(?:\/|$)/],
     },
-    dts: true,
   },
 });
