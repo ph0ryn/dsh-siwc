@@ -7,7 +7,16 @@ import { UserQuestionError } from "@deepseek-ai/dsh-user-questions";
 
 import { Accounts, KEY, hostId } from "./accounts.ts";
 import { ChatGPTAdapter, supportedModels } from "./adapter.ts";
-import { USAGE_URL, listModels, revoke, signIn, type Account } from "./oauth.ts";
+import {
+  IdentityUnavailable,
+  OpenAIConnectionError,
+  OpenAIError,
+  USAGE_URL,
+  listModels,
+  revoke,
+  signIn,
+  type Account,
+} from "./oauth.ts";
 
 import type { Context } from "@deepseek-ai/cordis";
 import type { AuthorizationNotice, AuthorizationSession } from "@deepseek-ai/dsh-authorization";
@@ -29,7 +38,38 @@ const EXPECTED_DSH_VERSIONS = [
 const label = (account: Account) =>
   `${account.email ?? "Saved registration"} (${account.id.slice(0, 8)})`;
 
-export function apply(ctx: Context): void {
+async function refreshModels(ctx: Context, accounts: Accounts): Promise<void> {
+  const state = await accounts.read();
+  const active = state.accounts.find((account) => account.id === state.activeId);
+  if (!active?.tokens) return;
+
+  let access: string;
+  let models: Awaited<ReturnType<typeof listModels>>;
+  try {
+    access = await accounts.accessToken(active.id);
+    models = await listModels(access);
+  } catch (error) {
+    if (
+      !(error instanceof OpenAIConnectionError) &&
+      !(error instanceof OpenAIError) &&
+      !(error instanceof IdentityUnavailable)
+    )
+      throw error;
+    ctx.logger.warn(
+      "Could not refresh ChatGPT models at startup; keeping the saved catalog: %s",
+      error.message,
+    );
+    return;
+  }
+  supportedModels(models);
+  await accounts.change((current) => {
+    const saved = current.accounts.find((account) => account.id === active.id);
+    // Do not apply a response to an account signed out or reconnected during the request.
+    if (saved?.tokens?.access === access) saved.models = models;
+  });
+}
+
+export async function apply(ctx: Context): Promise<void> {
   const version = getDshRuntimeVersion();
   if (!EXPECTED_DSH_VERSIONS.includes(version)) {
     ctx.logger.warn(
@@ -39,6 +79,7 @@ export function apply(ctx: Context): void {
     );
   }
   const accounts = new Accounts(ctx.credentials);
+  await refreshModels(ctx, accounts);
   const adapter = new ChatGPTAdapter(ctx, accounts);
   ctx.llm.registerAdapter(["openai"], adapter);
 

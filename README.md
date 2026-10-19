@@ -33,6 +33,8 @@ If another plugin uses the `openai` route, disable that route first to avoid a c
 Run `/chatgpt login` in a chat, open **Continue with ChatGPT**, and finish signing in.
 Then select a model under **ChatGPT plan**.
 
+On startup, the plugin refreshes the signed-in account's model list automatically.
+
 | Command             | Action                                                            |
 | ------------------- | ----------------------------------------------------------------- |
 | `/chatgpt login`    | Sign in again or add an account or workspace.                     |

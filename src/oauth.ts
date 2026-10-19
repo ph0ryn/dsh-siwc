@@ -15,6 +15,7 @@ export const USAGE_URL = "https://chatgpt.com/settings/usage";
 const SCOPE = "openid profile email offline_access resource.invoke chatgpt.tokens.use.direct";
 
 export class IdentityUnavailable extends Error {}
+export class OpenAIConnectionError extends Error {}
 
 export class OpenAIError extends Error {
   status: number;
@@ -84,6 +85,13 @@ async function json(url: string, init: RequestInit = {}): Promise<Record<string,
   const response = await fetch(url, {
     ...init,
     signal: AbortSignal.any([AbortSignal.timeout(20_000), ...(init.signal ? [init.signal] : [])]),
+  }).catch((cause: unknown) => {
+    throw new OpenAIConnectionError(
+      "Could not reach OpenAI. Check your connection and try again.",
+      {
+        cause,
+      },
+    );
   });
   if (!response.ok) {
     let code: string | undefined;
