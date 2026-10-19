@@ -2,11 +2,20 @@
   "name": "dsh-siwc",
   "version": "0.1.0",
   "description": "Sign in with ChatGPT for DeepSeek Harness",
+  "keywords": [
+    "dsh",
+    "deepseek-harness"
+  ],
+  "homepage": "https://github.com/ph0ryn/dsh-siwc#readme",
+  "bugs": {
+    "url": "https://github.com/ph0ryn/dsh-siwc/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ph0ryn/dsh-siwc.git"
   },
   "license": "MIT",
+  "author": "ph0ryn",
   "type": "module",
   "exports": {
     ".": {
