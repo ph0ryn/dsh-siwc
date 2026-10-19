@@ -28,7 +28,7 @@ export function supportedModels(choices: ModelChoice[]) {
     const model = known.get(id);
     assert.ok(
       model,
-      `ChatGPT model ${id} is missing from pi-ai 1.3.0. Update the plugin's Pi dependency.`,
+      `ChatGPT model ${id} is missing from pi-ai. Update the plugin's Pi dependency.`,
     );
     return { ...model, name };
   });

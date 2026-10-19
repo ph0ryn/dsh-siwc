@@ -478,7 +478,10 @@ test(
         const state = await accounts().read();
         const token = state.accounts[0].tokens!.access;
         unknownModel = true;
-        await assert.rejects(login({ account: state.accounts[0].id }), /missing from pi-ai/);
+        await assert.rejects(
+          login({ account: state.accounts[0].id }),
+          /missing from pi-ai\. Update the plugin's Pi dependency\./,
+        );
         unknownModel = false;
         assert.equal((await accounts().read()).accounts[0].tokens!.access, token);
       });
