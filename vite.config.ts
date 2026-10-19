@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   staged: {
     "*": "vp check --fix",
-    "package.json": "pnpx sort-package-json",
+    "package.json": "sort-package-json",
   },
   fmt: {
     arrowParens: "always",
