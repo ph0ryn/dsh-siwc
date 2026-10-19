@@ -40,17 +40,18 @@
     "zod": "4.4.3"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "~4.0.5",
-    "@deepseek-ai/dsh-atomic-write": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-attachment": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-authorization": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-commands": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-credentials": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-fs": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-home-paths": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-llm": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-llm-pi-ai": "0.2.1-rc.2",
-    "@deepseek-ai/dsh-user-questions": "0.2.1-rc.2"
+    "@deepseek-ai/cordis": "^4.0.5-alpha.1",
+    "@deepseek-ai/dsh-app-boot": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-atomic-write": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-attachment": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-authorization": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-commands": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-credentials": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-fs": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-home-paths": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-llm": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-llm-pi-ai": "^0.2.1-alpha.2",
+    "@deepseek-ai/dsh-user-questions": "^0.2.1-alpha.2"
   },
   "packageManager": "pnpm@11.22.0",
   "engines": {

@@ -1,7 +1,14 @@
 # dsh-siwc
 
 Use your ChatGPT plan in [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
-Requires DSH **0.2.1-rc.2**, Node.js **22.19+**, and a browser on the same machine as DSH.
+Requires DSH **^0.2.1-alpha.2**, Node.js **22.19+**, and a browser on the same machine as DSH.
+The DSH peer lower bound comes from source review, not execution on older releases.
+It keeps DSH's Pi dependency in 1.x, matching this plugin's Pi 1.3.0 provider types.
+
+The expected DSH versions are listed in `EXPECTED_DSH_VERSIONS` in [the plugin entry](src/index.ts).
+The list includes **0.2.1-alpha.2** through **0.2.1-alpha.5**, **0.2.1-rc.1**, and **0.2.1-rc.2**
+from source review. Versions outside this list emit a startup warning without stopping activation,
+provided DSH's peer compatibility check permits loading the plugin.
 
 ## Install
 

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 
+import { getDshRuntimeVersion } from "@deepseek-ai/dsh-app-boot";
 import { AuthorizationDeclinedError } from "@deepseek-ai/dsh-authorization";
 import { UserQuestionError } from "@deepseek-ai/dsh-user-questions";
 
@@ -16,10 +17,27 @@ import type {} from "@deepseek-ai/dsh-user-questions";
 export const name = "siwc";
 export const inject = ["credentials", "authorization", "llm"];
 
+const EXPECTED_DSH_VERSIONS = [
+  "0.2.1-alpha.2",
+  "0.2.1-alpha.3",
+  "0.2.1-alpha.4",
+  "0.2.1-alpha.5",
+  "0.2.1-rc.1",
+  "0.2.1-rc.2",
+];
+
 const label = (account: Account) =>
   `${account.email ?? "Saved registration"} (${account.id.slice(0, 8)})`;
 
 export function apply(ctx: Context): void {
+  const version = getDshRuntimeVersion();
+  if (!EXPECTED_DSH_VERSIONS.includes(version)) {
+    ctx.logger.warn(
+      "dsh-siwc expects DSH %s; running %s. Compatibility is unverified; continuing.",
+      EXPECTED_DSH_VERSIONS.join(", "),
+      version,
+    );
+  }
   const accounts = new Accounts(ctx.credentials);
   const adapter = new ChatGPTAdapter(ctx, accounts);
   ctx.llm.registerAdapter(["openai"], adapter);
