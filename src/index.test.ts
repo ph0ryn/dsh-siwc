@@ -339,6 +339,9 @@ test(
         "new registration validates identity, saves credentials and uses account-specific models",
         async () => {
           assert.deepEqual(await ctx.llm.listModels("openai"), []);
+          assert.deepEqual(ctx.llm.listProviders(), [
+            { id: "openai", name: "ChatGPT Subscription Plan" },
+          ]);
           assert.deepEqual(await login(), { status: "authorized" });
           assert.equal(authorization.searchParams.get("client_id"), "dynamic_agent_client");
           assert.equal(authorization.searchParams.get("agent_name_hint"), "DSH SIWC");
@@ -346,6 +349,10 @@ test(
           const state = await accounts().read();
           assert.equal(state.accounts[0].clientId, "oaiapp_user-one");
           assert.equal(state.accounts[0].subject, "user-one");
+          assert.equal(state.accounts[0].email, "user-one@example.test");
+          assert.deepEqual(ctx.llm.listProviders(), [
+            { id: "openai", name: "ChatGPT Subscription Plan" },
+          ]);
           assert.equal(welcomed, 1);
           assert.equal((await stat(join(home, ".credentials.yaml"))).mode & 0o777, 0o600);
           assert.equal((await ctx.llm.listModels("openai"))[0].id, MODEL);

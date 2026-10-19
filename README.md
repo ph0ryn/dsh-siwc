@@ -41,7 +41,7 @@ dsh plugin --profile web add ./dsh-siwc-0.1.0.tgz --ignore-scripts
 ## Use
 
 Run `/chatgpt login` in a chat, open **Continue with ChatGPT**, and finish signing in.
-Then select a model under **ChatGPT plan**.
+Then select a model under **ChatGPT Subscription Plan**.
 
 On startup, the plugin refreshes the signed-in account's model list automatically.
 

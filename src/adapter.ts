@@ -42,7 +42,7 @@ function profiles(account?: Account): ReadonlyMap<string, Profile> {
       "openai",
       {
         provider: "openai",
-        displayName: `ChatGPT plan${account?.email ? ` · ${account.email}` : ""}`,
+        displayName: "ChatGPT Subscription Plan",
         ...(account ? { accountId: account.id } : {}),
         piProvider: { ...base, getModels: () => models, getAllModels: () => models },
         streamIdleTimeoutMs: 300_000,
