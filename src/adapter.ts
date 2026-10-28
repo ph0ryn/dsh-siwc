@@ -1,5 +1,3 @@
-import assert from "node:assert/strict";
-
 import { resolveImageAttachmentAccess, resolveRetryPolicy } from "@deepseek-ai/dsh-llm";
 import {
   PiAiAdapter,
@@ -11,7 +9,7 @@ import { openaiProvider } from "@earendil-works/pi-ai/providers/openai";
 
 import { Accounts } from "./accounts.ts";
 
-import type { Account, ModelChoice } from "./oauth.ts";
+import type { Account } from "./oauth.ts";
 import type { Context } from "@deepseek-ai/cordis";
 import type {} from "@deepseek-ai/dsh-attachment";
 import type {} from "@deepseek-ai/dsh-fs";
@@ -21,22 +19,17 @@ interface Profile extends ResolvedPiAiProviderProfile {
   accountId?: string;
 }
 
-export function supportedModels(choices: ModelChoice[]) {
+function profiles(ctx: Context, account?: Account): ReadonlyMap<string, Profile> {
   const base = openaiProvider();
   const known = new Map(base.getModels().map((model) => [model.id, model]));
-  return choices.map(({ id, name }) => {
+  const models = (account?.models ?? []).flatMap(({ id, name }) => {
     const model = known.get(id);
-    assert.ok(
-      model,
-      `ChatGPT model ${id} is missing from pi-ai. Update the plugin's Pi dependency.`,
-    );
-    return { ...model, name };
+    if (!model) {
+      ctx.logger.warn("Skipping ChatGPT model %s: missing from pi-ai.", id);
+      return [];
+    }
+    return [{ ...model, name }];
   });
-}
-
-function profiles(account?: Account): ReadonlyMap<string, Profile> {
-  const base = openaiProvider();
-  const models = supportedModels(account?.models ?? []);
   return new Map([
     [
       "openai",
@@ -58,12 +51,13 @@ function profiles(account?: Account): ReadonlyMap<string, Profile> {
 }
 
 export class ChatGPTAdapter extends PiAiAdapter {
+  ctx: Context;
   accounts: Accounts;
   currentProfiles: { value: ReadonlyMap<string, Profile>; stamp: string };
   options: PiAiAdapterOptions;
 
   constructor(ctx: Context, accounts: Accounts) {
-    const current = { value: profiles(), stamp: "" };
+    const current = { value: profiles(ctx), stamp: "" };
     const options: PiAiAdapterOptions = {
       profiles: () => current.value,
       // shortcut: key resolution has no request signal; add cancellation when DSH exposes it.
@@ -81,6 +75,7 @@ export class ChatGPTAdapter extends PiAiAdapter {
         ),
     };
     super(options);
+    this.ctx = ctx;
     this.options = options;
     this.accounts = accounts;
     this.currentProfiles = current;
@@ -91,7 +86,7 @@ export class ChatGPTAdapter extends PiAiAdapter {
     const account = state.accounts.find((entry) => entry.id === state.activeId);
     const stamp = JSON.stringify([account?.id, account?.email, account?.models]);
     if (stamp !== this.currentProfiles.stamp) {
-      this.currentProfiles.value = profiles(account);
+      this.currentProfiles.value = profiles(this.ctx, account);
       this.currentProfiles.stamp = stamp;
     }
   }

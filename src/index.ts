@@ -6,7 +6,7 @@ import { AuthorizationDeclinedError } from "@deepseek-ai/dsh-authorization";
 import { UserQuestionError } from "@deepseek-ai/dsh-user-questions";
 
 import { Accounts, KEY, hostId } from "./accounts.ts";
-import { ChatGPTAdapter, supportedModels } from "./adapter.ts";
+import { ChatGPTAdapter } from "./adapter.ts";
 import {
   IdentityUnavailable,
   OpenAIConnectionError,
@@ -61,7 +61,6 @@ async function refreshModels(ctx: Context, accounts: Accounts): Promise<void> {
     );
     return;
   }
-  supportedModels(models);
   await accounts.change((current) => {
     const saved = current.accounts.find((account) => account.id === active.id);
     // Do not apply a response to an account signed out or reconnected during the request.
@@ -116,7 +115,6 @@ export async function apply(ctx: Context): Promise<void> {
     const access =
       session.method === "oauth" ? account.tokens.access : await accounts.accessToken(account.id);
     const models = await listModels(access, session.signal);
-    supportedModels(models);
     if (!state.welcomed) {
       session.notify({ message: "Manage usage", url: USAGE_URL });
       await session.prompt({

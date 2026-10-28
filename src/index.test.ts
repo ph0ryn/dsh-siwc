@@ -481,17 +481,27 @@ test(
           await login({ method: "select", account: state.accounts[0].id });
         },
       );
-      await t.test("unsupported model metadata cannot replace a working account", async () => {
-        const state = await accounts().read();
-        const token = state.accounts[0].tokens!.access;
-        unknownModel = true;
-        await assert.rejects(
-          login({ account: state.accounts[0].id }),
-          /missing from pi-ai\. Update the plugin's Pi dependency\./,
-        );
-        unknownModel = false;
-        assert.equal((await accounts().read()).accounts[0].tokens!.access, token);
-      });
+      await t.test(
+        "unknown models do not block sign-in, account switching or inference",
+        async () => {
+          const state = await accounts().read();
+          unknownModel = true;
+          for (const method of ["oauth", "select"] as const) {
+            assert.deepEqual(await login({ method, account: state.accounts[0].id }), {
+              status: "authorized",
+            });
+            assert.equal((await accounts().read()).activeId, state.accounts[0].id);
+            assert.deepEqual(
+              (await ctx.llm.listModels("openai")).map(({ id }) => id),
+              [MODEL],
+            );
+            const finish = (await generate()).at(-1);
+            assert.ok(finish?.type === "finish");
+            assert.notEqual(finish.reason.kind, "error");
+          }
+          unknownModel = false;
+        },
+      );
       await t.test(
         "expired refresh errors and incomplete Responses streams remain failures",
         async () => {
